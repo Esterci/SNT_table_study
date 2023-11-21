@@ -24,17 +24,17 @@ activation = [
     "elu",
 ]
 
-batch_size = [200,300,400]
+batch_size = [200, 300, 400]
 n_iter_no_change = [10]
 learningRates = [0.01, 0.001, 0.0001, 0.00001]
 beta_1_List = [0.98, 0.99]
 beta_2_List = [0.98, 0.99]
 
-state_file = 'state.pkl'
+state_file = "state.pkl"
 try:
-    with open(state_file, 'rb') as f:
+    with open(state_file, "rb") as f:
         state = pickle.load(f)
-        last_completed_iteration = state.get('last_completed_iteration', 0)
+        last_completed_iteration = state.get("last_completed_iteration", 0)
 except FileNotFoundError:
     state = {}
     last_completed_iteration = 0
@@ -52,11 +52,11 @@ for layers in hidden_layer_sizes:
                                 continue
                             else:
                                 # Atualize o estado após cada iteração
-                                for_iter+= 1
-                                state['last_completed_iteration'] = for_iter
-                                with open(state_file, 'wb') as f:
+                                for_iter += 1
+                                state["last_completed_iteration"] = for_iter
+                                with open(state_file, "wb") as f:
                                     pickle.dump(state, f)
-                                print('iteração: ', for_iter)                            
+                                print("iteração: ", for_iter)
                                 print(
                                     "Parameters: ",
                                     layers,

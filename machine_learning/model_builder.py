@@ -1,4 +1,5 @@
 from tensorflow.python.framework.ops import disable_eager_execution
+
 disable_eager_execution()
 from sklearn.model_selection import train_test_split
 from keras import backend as K
@@ -6,6 +7,7 @@ import tensorflow as tf
 import numpy as np
 import time
 import pandas as pd
+
 
 def sliding_window_MLP_Regressor(
     dataset, layers, batch, function, iterr, learningRate, beta1, beta2, epocas, shuffle
@@ -16,7 +18,7 @@ def sliding_window_MLP_Regressor(
     window = 1
 
     global_error = []
-    start_time = time.time()  # Início da contagem de tempo       
+    start_time = time.time()  # Início da contagem de tempo
 
     while window_sup <= len(dataset):
         tf.random.set_seed(0)
@@ -25,7 +27,9 @@ def sliding_window_MLP_Regressor(
         dados = dataset[window_inf:window_sup]
 
         # Definindo a ordem do sistema
-        X = pd.concat([dados.shift(1), dados.shift(2), dados.shift(3), dados.shift(4)], axis=1)
+        X = pd.concat(
+            [dados.shift(1), dados.shift(2), dados.shift(3), dados.shift(4)], axis=1
+        )
         y = pd.concat([dados.shift(-4)], axis=1)
 
         X.dropna(subset=["Daily Power yields (kWh)"], inplace=True)
@@ -49,7 +53,6 @@ def sliding_window_MLP_Regressor(
             X_temp, y_temp, test_size=0.5, shuffle=False, stratify=None
         )
 
-
         # Aplicando o modelo MLP Regressor
 
         # Conferindo o lag:
@@ -71,8 +74,12 @@ def sliding_window_MLP_Regressor(
         mlp_model = tf.keras.Model(inputs=input_layer, outputs=output_layer)
 
         early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", patience=iterr, verbose=1, min_delta=0.0001, mode='min'
-            ,restore_best_weights=True
+            monitor="val_loss",
+            patience=iterr,
+            verbose=1,
+            min_delta=0.0001,
+            mode="min",
+            restore_best_weights=True,
         )
         opt = tf.keras.optimizers.Adam(
             learning_rate=learningRate, beta_1=beta1, beta_2=beta2
@@ -89,13 +96,13 @@ def sliding_window_MLP_Regressor(
             verbose=1,
             callbacks=[early_stopping_callback],
             # validation_split=0.0,
-            validation_data=(X_val,y_val),
+            validation_data=(X_val, y_val),
             shuffle=shuffle,
             workers=-1,
             use_multiprocessing=True,
         )
-        
-        OutputTest = mlp_model.predict(X_test,workers=-1,use_multiprocessing=True)
+
+        OutputTest = mlp_model.predict(X_test, workers=-1, use_multiprocessing=True)
 
         local_error = [
             ((previsto - target) ** 2) ** 0.5

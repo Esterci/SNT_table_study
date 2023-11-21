@@ -17,6 +17,7 @@ parser.add_argument(
 
 args = parser.parse_args()
 
+
 def data_format(file):
     df = pd.read_csv(file)
     df = df[df.delta_t > 0]
@@ -72,5 +73,6 @@ def data_format(file):
     df_prev.to_csv("df_prev.csv")
 
     return 0
+
 
 data_format(args["file"])
