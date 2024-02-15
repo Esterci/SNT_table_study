@@ -3,3 +3,4 @@
 *.csv
 *.png
 *.pkl
+machine_learning/check_points/*
